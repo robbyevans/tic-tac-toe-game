@@ -11,7 +11,7 @@ interface Move {
 interface GameBoardProps {
   board: Move[] | null;
   onCellClick: (move: number) => void;
-  currentUserId: number; // Added prop
+  currentUserId: number;
 }
 
 type PlayerSymbol = "X" | "O" | null;
@@ -62,12 +62,10 @@ const GameBoard: React.FC<GameBoardProps> = ({
   onCellClick,
   currentUserId,
 }) => {
-  // Initialize a 3x3 board with null values
   const displayBoard: PlayerSymbol[] = Array(9).fill(null);
 
   if (board) {
     board.forEach((move) => {
-      // **Map player_id to "X" or "O" based on currentUserId**
       const symbol = move.player_id === currentUserId ? "X" : "O";
       displayBoard[move.move] = symbol;
     });

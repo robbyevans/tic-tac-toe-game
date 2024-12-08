@@ -1,7 +1,7 @@
 // src/pages/ProfilePage.tsx
 
 import React from "react";
-import { useUser } from "../context/UserContext";
+import { useUser } from "../hooks/useUser";
 import styled from "styled-components";
 
 const ProfileContainer = styled.div`

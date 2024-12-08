@@ -1,21 +1,23 @@
 // src/pages/RegisterPage.tsx
 
 import React, { useState } from "react";
-import { useUser } from "../context/UserContext";
+import { useDispatch } from "react-redux";
+import { setUser, setToken } from "../slices/userSlice";
 import { useNavigate } from "react-router-dom";
 import api from "../utils/api";
 import * as S from "../styles/styledComponents";
 import AvatarSelector from "../components/AvatorSelector";
 
 const RegisterPage: React.FC = () => {
-  const { setUser, setToken } = useUser();
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
   const [username, setUsername] = useState("");
   const [pin, setPin] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [avatar, setAvatar] = useState<File | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const navigate = useNavigate();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -51,8 +53,8 @@ const RegisterPage: React.FC = () => {
       });
 
       const { user, token } = response.data;
-      setUser(user);
-      setToken(token);
+      dispatch(setUser(user));
+      dispatch(setToken(token));
 
       // **Store the token in Local Storage**
       localStorage.setItem("jwt_token", token);

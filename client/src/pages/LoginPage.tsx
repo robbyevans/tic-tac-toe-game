@@ -1,18 +1,26 @@
 // src/pages/LoginPage.tsx
 
 import React, { useState } from "react";
-import { useUser } from "../context/UserContext";
+import { useDispatch } from "react-redux";
+import { useUser } from "../hooks/useUser";
+import { setUser, setToken } from "../slices/userSlice";
 import { useNavigate } from "react-router-dom";
 import api from "../utils/api";
 import * as S from "../styles/styledComponents";
 
 const LoginPage: React.FC = () => {
-  const { setUser, setToken } = useUser();
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
   const [username, setUsername] = useState("");
   const [pin, setPin] = useState("");
   const [error, setError] = useState<string | null>(null);
-  const navigate = useNavigate();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const { isAuthenticated } = useUser();
+  if (isAuthenticated) {
+    console.log("isAuthenticated", isAuthenticated);
+    navigate("/game");
+  }
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -39,9 +47,12 @@ const LoginPage: React.FC = () => {
       });
 
       const { user, token } = response.data;
-      setUser(user);
-      setToken(token);
+      dispatch(setUser(user));
+      dispatch(setToken(token));
+
+      // **Store the token in Local Storage**
       localStorage.setItem("jwt_token", token);
+
       navigate("/game");
     } catch (err: any) {
       setError(err.response?.data?.errors?.[0] || "Login failed.");

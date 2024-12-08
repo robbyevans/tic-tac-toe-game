@@ -8,7 +8,11 @@ Rails.application.routes.draw do
 
       get 'players/available', to: 'players#available'
 
-      resources :invitations, only: [:create, :update]
+      resources :invitations, only: [:create] do
+        member do
+          patch :respond
+        end
+      end
       resources :games, only: [:create, :show] do
         member do
           put 'move', to: 'games#update_move'

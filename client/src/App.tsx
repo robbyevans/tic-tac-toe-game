@@ -1,5 +1,3 @@
-// src/App.tsx
-
 import React from "react";
 import {
   BrowserRouter as Router,
@@ -14,59 +12,52 @@ import SinglePlayerPage from "./pages/SinglePlayerPage";
 import MultiplayerPage from "./pages/MultiplayerPage";
 import ProfilePage from "./pages/ProfilePages";
 import HomePage from "./pages/HomePage";
-import { UserProvider } from "./context/UserContext";
 import ProtectedRoute from "./components/ProtectedRoute";
+import InvitationsListener from "./components/InvitationsListener";
 
 const App: React.FC = () => {
   return (
-    <UserProvider>
-      <Router>
-        <Routes>
-          <Route path="/register" element={<RegisterPage />} />
-          <Route path="/login" element={<LoginPage />} />
-
-          {/* Protected Routes */}
-          <Route
-            path="/game"
-            element={
-              <ProtectedRoute>
-                <GamePage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/game/single"
-            element={
-              <ProtectedRoute>
-                <SinglePlayerPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/game/multiplayer"
-            element={
-              <ProtectedRoute>
-                <MultiplayerPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/profile"
-            element={
-              <ProtectedRoute>
-                <ProfilePage />
-              </ProtectedRoute>
-            }
-          />
-
-          {/* Root Route */}
-          <Route path="/" element={<HomePage />} />
-
-          {/* Fallback Route for Undefined Paths */}
-          <Route path="*" element={<Navigate to="/" replace />} />
-        </Routes>
-      </Router>
-    </UserProvider>
+    <Router>
+      <InvitationsListener />
+      <Routes>
+        <Route path="/register" element={<RegisterPage />} />
+        <Route path="/login" element={<LoginPage />} />
+        <Route
+          path="/game"
+          element={
+            <ProtectedRoute>
+              <GamePage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/game/single"
+          element={
+            <ProtectedRoute>
+              <SinglePlayerPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/game/multiplayer"
+          element={
+            <ProtectedRoute>
+              <MultiplayerPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/profile"
+          element={
+            <ProtectedRoute>
+              <ProfilePage />
+            </ProtectedRoute>
+          }
+        />
+        <Route path="/" element={<HomePage />} />
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
+    </Router>
   );
 };
 

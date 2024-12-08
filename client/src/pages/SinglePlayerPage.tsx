@@ -4,6 +4,8 @@ import React, { useState, useEffect } from "react";
 import SinglePlayerGameBoard from "../components/SinglePlayerGameBoard"; // Updated import
 import * as S from "../styles/styledComponents";
 import styled from "styled-components";
+import { useUser } from "../hooks/useUser";
+import ProfileIcon from "../components/ProfileIcon";
 
 type Player = "X" | "O";
 type CellValue = Player | null;
@@ -15,6 +17,7 @@ const Result = styled.p`
 `;
 
 const SinglePlayerPage: React.FC = () => {
+  const { user, logout } = useUser();
   const [board, setBoard] = useState<CellValue[]>(Array(9).fill(null));
   const [currentPlayer, setCurrentPlayer] = useState<Player>("X");
   const [gameOver, setGameOver] = useState(false);
@@ -90,8 +93,19 @@ const SinglePlayerPage: React.FC = () => {
     setWinner(null);
   };
 
+  const handleLogout = () => {
+    logout();
+  };
+
   return (
     <S.Container>
+      <S.TopBar>
+        <ProfileIcon
+          avatarUrl={user?.avatar_url}
+          username={user?.username}
+          onLogout={handleLogout}
+        />
+      </S.TopBar>
       <S.Title>Single Player</S.Title>
       <SinglePlayerGameBoard board={board} onCellClick={handleMove} />
       {gameOver && (

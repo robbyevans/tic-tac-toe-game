@@ -12,15 +12,15 @@ module ApplicationCable
 
     def find_verified_user
       token = request.params[:token]
-      return reject_unauthorized_connection unless token
-
-      begin
-        decoded = JWT.decode(token, Rails.application.credentials.jwt_secret)[0]
+      if token.present?
+        decoded = JWT.decode(token, Rails.application.credentials.jwt_secret, true, algorithm: 'HS256')[0]
         user = User.find(decoded["user_id"])
         user
-      rescue ActiveRecord::RecordNotFound, JWT::DecodeError
+      else
         reject_unauthorized_connection
       end
+    rescue JWT::DecodeError, ActiveRecord::RecordNotFound
+      reject_unauthorized_connection
     end
   end
 end

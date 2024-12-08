@@ -2,13 +2,9 @@
 
 import React from "react";
 import styled from "styled-components";
-
-interface User {
-  id: number;
-  username: string;
-  avatar_url?: string;
-  stars: number;
-}
+import { useDispatch } from "react-redux";
+import { clearCurrentInvitation } from "../slices/invitationSlice";
+import { User } from "../types"; // Import User interface
 
 interface InvitationModalProps {
   sender: User;
@@ -88,10 +84,19 @@ const InvitationModal: React.FC<InvitationModalProps> = ({
   acceptInvitation,
   declineInvitation,
 }) => {
+  const dispatch = useDispatch();
+
+  const handleClose = () => {
+    dispatch(clearCurrentInvitation());
+  };
+
   return (
-    <ModalOverlay>
-      <ModalContent>
-        <Avatar src={sender.avatar_url} alt={`${sender.username}'s avatar`} />
+    <ModalOverlay onClick={handleClose}>
+      <ModalContent onClick={(e) => e.stopPropagation()}>
+        {/* Display sender's avatar if available */}
+        {sender.avatar_url && (
+          <Avatar src={sender.avatar_url} alt={`${sender.username}'s avatar`} />
+        )}
         <Username>{sender.username} invites you to play Tic-Tac-Toe!</Username>
         <ButtonContainer>
           <AcceptButton onClick={acceptInvitation}>Accept</AcceptButton>

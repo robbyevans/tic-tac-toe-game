@@ -88,3 +88,51 @@ export const WaitingMessage = styled.p`
   color: #2c3e50;
   margin-top: 20px;
 `;
+
+export const TopBar = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 20px;
+  background-color: #f8f9fa;
+  border-bottom: 1px solid #e9ecef;
+`;
+
+export const ProfileSection = styled.div`
+  display: flex;
+  align-items: center;
+`;
+
+export const ProfileIcon = styled.img`
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  margin-right: 10px;
+`;
+
+export const Username = styled.span`
+  font-size: 1rem;
+  font-weight: bold;
+  color: #333;
+`;
+
+export const LogoutButton = styled.button`
+  margin-left: 15px;
+  padding: 5px 10px;
+  background-color: #e74c3c;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+
+  &:hover {
+    background-color: #c0392b;
+  }
+`;
+
+export const GameResult = styled.div`
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #2c3e50;
+  margin-top: 20px;
+`;

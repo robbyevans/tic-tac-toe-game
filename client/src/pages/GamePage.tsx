@@ -1,56 +1,101 @@
-// src/pages/GamePage.tsx
-
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import GameBoard from "../components/GameBoard";
+import useGame from "../hooks/useGame";
+import { useUser } from "../hooks/useUser";
+import api from "../utils/api";
 import * as S from "../styles/styledComponents";
-import styled from "styled-components";
-
-const OptionsContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-  margin-top: 50px;
-`;
-
-const OptionButton = styled.button`
-  padding: 15px 30px;
-  background-color: #3498db;
-  color: #ffffff;
-  border: none;
-  border-radius: 8px;
-  font-size: 1.2rem;
-  cursor: pointer;
-  transition: background-color 0.3s, transform 0.2s;
-
-  &:hover {
-    background-color: #2980b9;
-    transform: translateY(-2px);
-  }
-
-  &:active {
-    background-color: #1c5980;
-    transform: translateY(0);
-  }
-`;
+import { User } from "../types";
 
 const GamePage: React.FC = () => {
   const navigate = useNavigate();
+  const { currentGame, updateCurrentGame, clearCurrentGame } = useGame();
+  const { user,logout } = useUser();
+  const [opponent, setOpponent] = useState<User | null>(null);
 
-  const handleSinglePlayer = () => {
-    navigate("/game/single");
+  useEffect(() => {
+    if (!currentGame) {
+      navigate("/game/multiplayer"); // Redirect to multiplayer if no game is active
+    } else {
+      // Determine opponent ID based on the current user's ID
+      const opponentId =
+        currentGame.player1_id === user?.id
+          ? currentGame.player2_id
+          : currentGame.player1_id;
+
+      if (opponentId) {
+        // Fetch opponent details
+        api.get(`/users/${opponentId}`).then((response) => {
+          setOpponent(response.data);
+        });
+      }
+    }
+  }, [currentGame, navigate, user]);
+
+  const handleMove = async (move: number) => {
+    if (
+      currentGame &&
+      currentGame.status === "ongoing" &&
+      !currentGame.winner_id
+    ) {
+      try {
+        const response = await api.put(`/games/${currentGame.id}/move`, {
+          move,
+        });
+        updateCurrentGame(response.data.game);
+      } catch (err: unknown) {
+        if (axios.isAxiosError(err)) {
+          console.error("Error making move:", err);
+          alert(err.response?.data?.errors?.[0] || "Failed to make move.");
+        } else {
+          console.error("An unexpected error occurred:", err);
+          alert("An unexpected error occurred.");
+        }
+      }
+    }
   };
 
-  const handleMultiplayer = () => {
-    navigate("/game/multiplayer");
+  const handleLogout = () => {
+    clearCurrentGame();
+    logout()
+    navigate("/login");
   };
 
   return (
     <S.Container>
-      <S.Title>Select Game Mode</S.Title>
-      <OptionsContainer>
-        <OptionButton onClick={handleSinglePlayer}>Single Player</OptionButton>
-        <OptionButton onClick={handleMultiplayer}>Multiplayer</OptionButton>
-      </OptionsContainer>
+      <S.TopBar>
+        <S.ProfileSection>
+          <S.ProfileIcon
+            src={user?.avatar_url}
+            alt={`${user?.username}'s avatar`}
+          />
+          <S.Username>{user?.username}</S.Username>
+          <S.LogoutButton onClick={handleLogout}>Logout</S.LogoutButton>
+        </S.ProfileSection>
+        {opponent && (
+          <S.ProfileSection>
+            <S.ProfileIcon
+              src={opponent.avatar_url}
+              alt={`${opponent.username}'s avatar`}
+            />
+            <S.Username>{opponent.username}</S.Username>
+          </S.ProfileSection>
+        )}
+      </S.TopBar>
+      <S.Title>Game</S.Title>
+      {currentGame && (
+        <GameBoard
+          board={currentGame.moves}
+          onCellClick={handleMove}
+          currentUserId={user?.id || 0}
+        />
+      )}
+      {currentGame?.winner_id && (
+        <S.GameResult>
+          {currentGame.winner_id === user?.id ? "You Win!" : "You Lose!"}
+        </S.GameResult>
+      )}
     </S.Container>
   );
 };

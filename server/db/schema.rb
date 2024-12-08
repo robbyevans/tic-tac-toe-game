@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2024_12_07_212624) do
+ActiveRecord::Schema[7.0].define(version: 2024_12_07_213820) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.string "name", null: false
     t.string "record_type", null: false
@@ -52,6 +52,16 @@ ActiveRecord::Schema[7.0].define(version: 2024_12_07_212624) do
     t.index ["winner_id"], name: "index_games_on_winner_id"
   end
 
+  create_table "invitations", force: :cascade do |t|
+    t.integer "sender_id", null: false
+    t.integer "receiver_id", null: false
+    t.string "status", default: "pending", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["receiver_id"], name: "index_invitations_on_receiver_id"
+    t.index ["sender_id"], name: "index_invitations_on_sender_id"
+  end
+
   create_table "users", force: :cascade do |t|
     t.string "username", null: false
     t.integer "pin", null: false
@@ -70,4 +80,6 @@ ActiveRecord::Schema[7.0].define(version: 2024_12_07_212624) do
   add_foreign_key "games", "users", column: "player1_id"
   add_foreign_key "games", "users", column: "player2_id"
   add_foreign_key "games", "users", column: "winner_id"
+  add_foreign_key "invitations", "users", column: "receiver_id"
+  add_foreign_key "invitations", "users", column: "sender_id"
 end
