@@ -25,11 +25,8 @@ export const Title = styled.h2`
 `;
 
 export const Form = styled.form`
-  background: #ffffff;
-  padding: 40px 50px;
   border-radius: 12px;
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
-  width: 100%;
   max-width: 450px;
   display: flex;
   flex-direction: column;

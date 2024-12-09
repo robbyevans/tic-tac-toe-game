@@ -30,7 +30,6 @@ export const Card = styled.div`
   padding: 30px;
   border-radius: 16px;
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
-  width: 100%;
   max-width: 500px;
   animation: ${fadeIn} 0.5s ease forwards;
   margin-bottom: 20px;

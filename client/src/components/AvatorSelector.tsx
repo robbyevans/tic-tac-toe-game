@@ -1,7 +1,10 @@
-// src/components/AvatarSelector.tsx
-
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
+
+// Import local avatar images
+import ArcherElf from "../assets/avatars/archer-elf.jpg";
+import GingerElf from "../assets/avatars/ginger-elf.jpg";
+import LadyElf from "../assets/avatars/lady-elf.jpg";
 
 interface AvatarSelectorProps {
   selectedAvatar: File | null;
@@ -41,11 +44,11 @@ const UploadInput = styled.input`
   margin-top: 10px;
 `;
 
+// Replace predefined URLs with imported local images
 const predefinedAvatars = [
-  "https://example.com/avatars/avatar1.png",
-  "https://example.com/avatars/avatar2.png",
-  "https://example.com/avatars/avatar3.png",
-  // Add more URLs as needed
+  { id: 1, name: "Archer Elf", src: ArcherElf },
+  { id: 2, name: "Ginger Elf", src: GingerElf },
+  { id: 3, name: "Lady Elf", src: LadyElf },
 ];
 
 const AvatarSelector: React.FC<AvatarSelectorProps> = ({
@@ -98,13 +101,13 @@ const AvatarSelector: React.FC<AvatarSelectorProps> = ({
     <AvatarContainer>
       <label>Select an Avatar:</label>
       <AvatarOptions>
-        {predefinedAvatars.map((url, index) => (
+        {predefinedAvatars.map((avatar) => (
           <AvatarImage
-            key={index}
-            src={url}
-            alt={`Avatar ${index + 1}`}
-            selected={selectedUrl === url}
-            onClick={() => handleAvatarClick(url)}
+            key={avatar.id}
+            src={avatar.src}
+            alt={avatar.name}
+            selected={selectedUrl === avatar.src}
+            onClick={() => handleAvatarClick(avatar.src)}
           />
         ))}
       </AvatarOptions>
