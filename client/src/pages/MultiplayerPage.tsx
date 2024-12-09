@@ -1,4 +1,3 @@
-// src/pages/MultiplayerPage.tsx
 import React, { useEffect } from "react";
 import * as S from "../styles/styledComponents";
 import PlayerList from "../components/PlayerList";
@@ -7,31 +6,35 @@ import { useMultiplayer } from "../hooks/useMultiplayer";
 import useInvitations from "../hooks/useInvitations";
 import { useUser } from "../hooks/useUser";
 import ProfileIcon from "../components/ProfileIcon";
+import { useNavigate } from "react-router-dom";
 
 const MultiplayerPage: React.FC = () => {
   const { user, logout } = useUser();
-  const { currentInvitation } = useInvitations();
+  const { currentInvitation, handleAcceptInvitation } = useInvitations(
+    user?.id || null
+  );
+  const navigate = useNavigate();
 
-  useEffect(() => {
-    console.log("currentInvitation", currentInvitation);
-  }, [currentInvitation]);
-
-  const {
-    availablePlayers,
-    loadPlayers,
-    invitePlayer,
-    acceptCurrentInvitation,
-    declineInvitation,
-  } = useMultiplayer();
-
-  console.log("currentInvitation", currentInvitation);
+  const { availablePlayers, loadPlayers, invitePlayer, declineInvitation } =
+    useMultiplayer();
 
   useEffect(() => {
     loadPlayers();
   }, []);
 
-  const handleLogout = () => {
-    logout();
+  const handleAccept = async () => {
+    if (currentInvitation?.id) {
+      try {
+        const response = await handleAcceptInvitation(currentInvitation.id);
+        if (response?.game?.id) {
+          navigate(`/game/${response.game.id}`);
+        }
+      } catch (error) {
+        console.error("Error accepting invitation:", error);
+      }
+    } else {
+      console.error("Invalid invitation ID:", currentInvitation);
+    }
   };
 
   return (
@@ -40,7 +43,7 @@ const MultiplayerPage: React.FC = () => {
         <ProfileIcon
           avatarUrl={user?.avatar_url}
           username={user?.username}
-          onLogout={handleLogout}
+          onLogout={logout}
         />
       </S.TopBar>
       <S.Title>Multiplayer</S.Title>
@@ -55,11 +58,8 @@ const MultiplayerPage: React.FC = () => {
             username: currentInvitation.sender_username,
             avatar_url: currentInvitation.sender_avatar_url || "",
             stars: 0,
-            email: "",
           }}
-          acceptInvitation={() =>
-            acceptCurrentInvitation(currentInvitation.invitation_id)
-          }
+          acceptInvitation={handleAccept}
           declineInvitation={declineInvitation}
         />
       )}

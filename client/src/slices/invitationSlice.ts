@@ -1,17 +1,23 @@
 // src/slices/invitationSlice.ts
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import api from "../utils/api";
-import { Invitation } from "../types";
+import { Invitation, Game } from "../types";
+
+export interface GameResponse {
+  game: Game;
+}
 
 interface InvitationState {
   invitations: Invitation[];
   currentInvitation: Invitation | null;
+  expiryTime: number | null;
   error: string | null;
 }
 
 const initialState: InvitationState = {
   invitations: [],
   currentInvitation: null,
+  expiryTime: null,
   error: null,
 };
 
@@ -30,22 +36,22 @@ export const sendInvitation = createAsyncThunk(
   }
 );
 
-// Thunk for accepting an invitation
-export const acceptInvitation = createAsyncThunk(
-  "invitations/acceptInvitation",
-  async (invitationId: number, { rejectWithValue }) => {
-    try {
-      const response = await api.put(`/invitations/${invitationId}`, {
-        status: "accepted",
-      });
-      return response.data.game; // Returns the updated game
-    } catch (err: any) {
-      return rejectWithValue(
-        err.response?.data?.errors?.[0] || "Failed to accept invitation."
-      );
-    }
+export const acceptInvitation = createAsyncThunk<
+  GameResponse, // Return type of the thunk
+  number, // Argument type for the thunk
+  { rejectValue: string }
+>("invitations/acceptInvitation", async (invitationId, { rejectWithValue }) => {
+  try {
+    const response = await api.patch(`/invitations/${invitationId}/respond`, {
+      status: "accepted",
+    });
+    return response.data as GameResponse; // Ensure response matches GameResponse
+  } catch (err: any) {
+    return rejectWithValue(
+      err.response?.data?.errors?.[0] || "Failed to accept invitation."
+    );
   }
-);
+});
 
 const invitationSlice = createSlice({
   name: "invitations",
@@ -54,13 +60,18 @@ const invitationSlice = createSlice({
     addInvitation(state, action) {
       state.invitations.push(action.payload);
       state.currentInvitation = action.payload;
+      state.expiryTime = Date.now() + 30000;
     },
     clearCurrentInvitation(state) {
       state.currentInvitation = null;
+      state.expiryTime = null;
     },
   },
   extraReducers: (builder) => {
     builder
+      .addCase(acceptInvitation.fulfilled, (state) => {
+        state.currentInvitation = null; // Clear current invitation after acceptance
+      })
       .addCase(sendInvitation.rejected, (state, action) => {
         state.error = action.payload as string;
       })

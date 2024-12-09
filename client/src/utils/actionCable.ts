@@ -1,15 +1,13 @@
-// src/utils/actionCable.ts
-
 import ActionCable from "actioncable";
 
-// **Function to create a consumer with token**
 const createCable = (token: string | null) => {
+  const wsUrl = "ws://localhost:3000/cable";
   if (!token) {
     console.warn("No token provided for ActionCable connection.");
-    return ActionCable.createConsumer();
+    return ActionCable.createConsumer(wsUrl);
   }
 
-  return ActionCable.createConsumer(`ws://localhost:3000/cable?token=${token}`);
+  return ActionCable.createConsumer(`${wsUrl}?token=${token}`);
 };
 
 export default createCable;

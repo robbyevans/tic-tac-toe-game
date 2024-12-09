@@ -23,7 +23,7 @@ export interface Game {
 }
 
 export interface Invitation {
-  invitation_id: number;
+  id: number; // Update this
   sender_id: number;
   sender_username: string;
   sender_avatar_url?: string;

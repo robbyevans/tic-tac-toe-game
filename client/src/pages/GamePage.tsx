@@ -11,21 +11,19 @@ import { User } from "../types";
 const GamePage: React.FC = () => {
   const navigate = useNavigate();
   const { currentGame, updateCurrentGame, clearCurrentGame } = useGame();
-  const { user,logout } = useUser();
+  const { user, logout } = useUser();
   const [opponent, setOpponent] = useState<User | null>(null);
 
   useEffect(() => {
     if (!currentGame) {
-      navigate("/game/multiplayer"); // Redirect to multiplayer if no game is active
+      navigate("/game/multiplayer");
     } else {
-      // Determine opponent ID based on the current user's ID
       const opponentId =
         currentGame.player1_id === user?.id
           ? currentGame.player2_id
           : currentGame.player1_id;
 
       if (opponentId) {
-        // Fetch opponent details
         api.get(`/users/${opponentId}`).then((response) => {
           setOpponent(response.data);
         });
@@ -58,7 +56,7 @@ const GamePage: React.FC = () => {
 
   const handleLogout = () => {
     clearCurrentGame();
-    logout()
+    logout();
     navigate("/login");
   };
 

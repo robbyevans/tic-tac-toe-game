@@ -21,6 +21,10 @@ gem "puma", "~> 5.0"
 # Use Kredis to get higher-level data types in Redis [https://github.com/rails/kredis]
 # gem "kredis"
 
+gem 'sidekiq'
+gem 'redis'
+
+
 # Use jwt for JSON Web Token authentication
 gem 'jwt', '~> 2.2'
 

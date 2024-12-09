@@ -1,38 +1,68 @@
-// src/hooks/useInvitations.ts
-
+import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "../store/store";
+import createCable from "../utils/actionCable";
 import {
-  sendInvitation,
-  acceptInvitation,
   addInvitation,
   clearCurrentInvitation,
+  acceptInvitation,
 } from "../slices/invitationSlice";
+import { RootState } from "../store/store";
 import { Invitation } from "../types";
-import { AppDispatch } from "../store/store";
+import { AppDispatch } from "../store/store"; // Import the store's dispatch type
+import { GameResponse } from "../slices/invitationSlice";
 
-const useInvitations = () => {
-  const dispatch = useDispatch<AppDispatch>();
-  const { invitations, currentInvitation, error } = useSelector(
+interface InvitationData {
+  type: "NEW_INVITATION" | "INVITATION_EXPIRED";
+  invitation?: Invitation;
+}
+
+const useInvitations = (userId: number | null) => {
+  const dispatch: AppDispatch = useDispatch(); // Explicitly type dispatch
+  const { currentInvitation, expiryTime } = useSelector(
     (state: RootState) => state.invitations
   );
 
-  // Methods to interact with the invitations slice
-  const send = (receiver_id: number) => dispatch(sendInvitation(receiver_id));
-  const accept = (invitationId: number) =>
-    dispatch(acceptInvitation(invitationId));
-  const add = (invitation: Invitation) => dispatch(addInvitation(invitation));
-  const clear = () => dispatch(clearCurrentInvitation());
+  useEffect(() => {
+    if (!userId) return;
 
-  return {
-    invitations,
-    currentInvitation,
-    error,
-    send,
-    accept,
-    add,
-    clear,
+    const cable = createCable(localStorage.getItem("jwt_token"));
+
+    const subscription = cable.subscriptions.create(
+      { channel: "InvitationsChannel" },
+      {
+        received(data: InvitationData) {
+          if (data.type === "NEW_INVITATION") {
+            dispatch(addInvitation(data.invitation));
+          } else if (data.type === "INVITATION_EXPIRED") {
+            dispatch(clearCurrentInvitation());
+            alert("Invitation expired.");
+          }
+        },
+      }
+    );
+
+    if (expiryTime && Date.now() > expiryTime) {
+      dispatch(clearCurrentInvitation());
+    }
+
+    return () => {
+      subscription.unsubscribe();
+    };
+  }, [userId, dispatch, expiryTime]);
+
+  const handleAcceptInvitation = async (
+    invitationId: number
+  ): Promise<GameResponse | null> => {
+    try {
+      const result = await dispatch(acceptInvitation(invitationId)).unwrap();
+      return result; // The result will be of type GameResponse
+    } catch (error) {
+      console.error("Error in handleAcceptInvitation:", error);
+      return null;
+    }
   };
+
+  return { currentInvitation, handleAcceptInvitation };
 };
 
 export default useInvitations;
