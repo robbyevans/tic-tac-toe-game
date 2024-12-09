@@ -1,5 +1,4 @@
 // src/pages/RegisterPage.tsx
-
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 import { setUser, setToken } from "../slices/userSlice";
@@ -7,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 import api from "../utils/api";
 import * as S from "../styles/styledComponents";
 import AvatarSelector from "../components/AvatorSelector";
+import { PageContainer, PageTitle, Card } from "../styles/styledPages";
 
 const RegisterPage: React.FC = () => {
   const dispatch = useDispatch();
@@ -24,7 +24,6 @@ const RegisterPage: React.FC = () => {
     e.preventDefault();
     setError(null);
 
-    // Basic validation
     if (!username || !pin || !email || !password) {
       setError("All fields except avatar are required.");
       return;
@@ -55,8 +54,6 @@ const RegisterPage: React.FC = () => {
       const { user, token } = response.data;
       dispatch(setUser(user));
       dispatch(setToken(token));
-
-      // **Store the token in Local Storage**
       localStorage.setItem("jwt_token", token);
 
       navigate("/game");
@@ -72,49 +69,54 @@ const RegisterPage: React.FC = () => {
   };
 
   return (
-    <S.Container>
-      <S.Title>Register</S.Title>
-      <S.Form onSubmit={handleSubmit}>
-        <S.Input
-          type="text"
-          placeholder="Username"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-          required
-        />
-        <S.Input
-          type="password"
-          placeholder="4-Digit PIN"
-          value={pin}
-          onChange={(e) => setPin(e.target.value)}
-          required
-          maxLength={4}
-          minLength={4}
-          pattern="\d{4}"
-          title="Enter exactly 4 digits."
-        />
-        <S.Input
-          type="email"
-          placeholder="Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-        />
-        <S.Input
-          type="password"
-          placeholder="Password (min 4 characters)"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-          minLength={4}
-        />
-        <AvatarSelector selectedAvatar={avatar} setSelectedAvatar={setAvatar} />
-        <S.Button type="submit" disabled={isSubmitting}>
-          {isSubmitting ? "Registering..." : "Register"}
-        </S.Button>
-        {error && <S.Error>{error}</S.Error>}
-      </S.Form>
-    </S.Container>
+    <PageContainer>
+      <PageTitle>Register</PageTitle>
+      <Card>
+        <S.Form onSubmit={handleSubmit}>
+          <S.Input
+            type="text"
+            placeholder="Username"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+            required
+          />
+          <S.Input
+            type="password"
+            placeholder="4-Digit PIN"
+            value={pin}
+            onChange={(e) => setPin(e.target.value)}
+            required
+            maxLength={4}
+            minLength={4}
+            pattern="\d{4}"
+            title="Enter exactly 4 digits."
+          />
+          <S.Input
+            type="email"
+            placeholder="Email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+          />
+          <S.Input
+            type="password"
+            placeholder="Password (min 4 characters)"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+            minLength={4}
+          />
+          <AvatarSelector
+            selectedAvatar={avatar}
+            setSelectedAvatar={setAvatar}
+          />
+          <S.Button type="submit" disabled={isSubmitting}>
+            {isSubmitting ? "Registering..." : "Register"}
+          </S.Button>
+          {error && <S.Error>{error}</S.Error>}
+        </S.Form>
+      </Card>
+    </PageContainer>
   );
 };
 

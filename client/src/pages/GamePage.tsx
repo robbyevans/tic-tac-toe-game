@@ -1,3 +1,4 @@
+// src/pages/GamePage.tsx
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
@@ -7,6 +8,20 @@ import { useUser } from "../hooks/useUser";
 import api from "../utils/api";
 import * as S from "../styles/styledComponents";
 import { User } from "../types";
+import { PageContainer, PageTitle } from "../styles/styledPages";
+import styled from "styled-components";
+
+const OpponentSection = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 10px;
+`;
+
+const OpponentAvatar = styled.img`
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+`;
 
 const GamePage: React.FC = () => {
   const navigate = useNavigate();
@@ -61,7 +76,7 @@ const GamePage: React.FC = () => {
   };
 
   return (
-    <S.Container>
+    <PageContainer>
       <S.TopBar>
         <S.ProfileSection>
           <S.ProfileIcon
@@ -72,16 +87,16 @@ const GamePage: React.FC = () => {
           <S.LogoutButton onClick={handleLogout}>Logout</S.LogoutButton>
         </S.ProfileSection>
         {opponent && (
-          <S.ProfileSection>
-            <S.ProfileIcon
+          <OpponentSection>
+            <OpponentAvatar
               src={opponent.avatar_url}
               alt={`${opponent.username}'s avatar`}
             />
             <S.Username>{opponent.username}</S.Username>
-          </S.ProfileSection>
+          </OpponentSection>
         )}
       </S.TopBar>
-      <S.Title>Game</S.Title>
+      <PageTitle>Game</PageTitle>
       {currentGame && (
         <GameBoard
           board={currentGame.moves}
@@ -94,7 +109,7 @@ const GamePage: React.FC = () => {
           {currentGame.winner_id === user?.id ? "You Win!" : "You Lose!"}
         </S.GameResult>
       )}
-    </S.Container>
+    </PageContainer>
   );
 };
 

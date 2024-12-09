@@ -1,3 +1,4 @@
+// src/pages/MultiplayerPage.tsx
 import React, { useEffect } from "react";
 import * as S from "../styles/styledComponents";
 import PlayerList from "../components/PlayerList";
@@ -7,6 +8,7 @@ import useInvitations from "../hooks/useInvitations";
 import { useUser } from "../hooks/useUser";
 import ProfileIcon from "../components/ProfileIcon";
 import { useNavigate } from "react-router-dom";
+import { PageContainer, PageTitle, Card } from "../styles/styledPages";
 
 const MultiplayerPage: React.FC = () => {
   const { user, logout } = useUser();
@@ -38,19 +40,21 @@ const MultiplayerPage: React.FC = () => {
   };
 
   return (
-    <S.Container>
+    <PageContainer>
       <S.TopBar>
         <ProfileIcon
-          avatarUrl={user?.avatar_url}
+          avatarUrl={user?.avatar_url || ""}
           username={user?.username}
           onLogout={logout}
         />
       </S.TopBar>
-      <S.Title>Multiplayer</S.Title>
-      <PlayerList
-        players={availablePlayers}
-        sendInvitation={(player) => invitePlayer(player.id)}
-      />
+      <PageTitle>Multiplayer</PageTitle>
+      <Card>
+        <PlayerList
+          players={availablePlayers}
+          sendInvitation={(player) => invitePlayer(player.id)}
+        />
+      </Card>
       {currentInvitation && (
         <InvitationModal
           sender={{
@@ -63,7 +67,7 @@ const MultiplayerPage: React.FC = () => {
           declineInvitation={declineInvitation}
         />
       )}
-    </S.Container>
+    </PageContainer>
   );
 };
 

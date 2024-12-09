@@ -12,6 +12,7 @@ interface InvitationState {
   currentInvitation: Invitation | null;
   expiryTime: number | null;
   error: string | null;
+  isLoading: boolean;
 }
 
 const initialState: InvitationState = {
@@ -19,33 +20,35 @@ const initialState: InvitationState = {
   currentInvitation: null,
   expiryTime: null,
   error: null,
+  isLoading: false,
 };
 
 // Thunk for sending invitations
-export const sendInvitation = createAsyncThunk(
-  "invitations/sendInvitation",
-  async (receiver_id: number, { rejectWithValue }) => {
-    try {
-      await api.post("/invitations", { receiver_id });
-      return receiver_id; // Optional: return receiver ID for UI feedback
-    } catch (err: any) {
-      return rejectWithValue(
-        err.response?.data?.errors?.[0] || "Failed to send invitation."
-      );
-    }
+export const sendInvitation = createAsyncThunk<
+  number,
+  number,
+  { rejectValue: string }
+>("invitations/sendInvitation", async (receiver_id, { rejectWithValue }) => {
+  try {
+    await api.post("/invitations", { receiver_id });
+    return receiver_id;
+  } catch (err: any) {
+    return rejectWithValue(
+      err.response?.data?.errors?.[0] || "Failed to send invitation."
+    );
   }
-);
+});
 
 export const acceptInvitation = createAsyncThunk<
-  GameResponse, // Return type of the thunk
-  number, // Argument type for the thunk
+  GameResponse,
+  number,
   { rejectValue: string }
 >("invitations/acceptInvitation", async (invitationId, { rejectWithValue }) => {
   try {
     const response = await api.patch(`/invitations/${invitationId}/respond`, {
       status: "accepted",
     });
-    return response.data as GameResponse; // Ensure response matches GameResponse
+    return response.data as GameResponse;
   } catch (err: any) {
     return rejectWithValue(
       err.response?.data?.errors?.[0] || "Failed to accept invitation."
@@ -66,22 +69,46 @@ const invitationSlice = createSlice({
       state.currentInvitation = null;
       state.expiryTime = null;
     },
+    updateCurrentInvitation(state, action) {
+      if (state.currentInvitation?.id === action.payload.id) {
+        state.currentInvitation = action.payload;
+      }
+    },
   },
   extraReducers: (builder) => {
     builder
-      .addCase(acceptInvitation.fulfilled, (state) => {
-        state.currentInvitation = null; // Clear current invitation after acceptance
+      .addCase(sendInvitation.pending, (state) => {
+        state.isLoading = true;
+        state.error = null;
+      })
+      .addCase(sendInvitation.fulfilled, (state) => {
+        state.isLoading = false;
       })
       .addCase(sendInvitation.rejected, (state, action) => {
+        state.isLoading = false;
         state.error = action.payload as string;
       })
+
+      .addCase(acceptInvitation.pending, (state) => {
+        state.isLoading = true;
+        state.error = null;
+      })
+      .addCase(acceptInvitation.fulfilled, (state) => {
+        state.isLoading = false;
+        // Once accepted, clear the current invitation to avoid confusion.
+        state.currentInvitation = null;
+      })
       .addCase(acceptInvitation.rejected, (state, action) => {
+        state.isLoading = false;
         state.error = action.payload as string;
       });
   },
 });
 
-export const { addInvitation, clearCurrentInvitation } =
-  invitationSlice.actions;
+export const {
+  addInvitation,
+  clearCurrentInvitation,
+  updateCurrentInvitation,
+} = invitationSlice.actions;
 
 export default invitationSlice.reducer;

@@ -2,6 +2,8 @@
 
 import React from "react";
 import styled from "styled-components";
+import { useSelector } from "react-redux";
+import { RootState } from "../store/store";
 
 interface User {
   id: number;
@@ -67,6 +69,8 @@ const InviteButton = styled.button`
 `;
 
 const PlayerList: React.FC<PlayerListProps> = ({ players, sendInvitation }) => {
+  const { isLoading } = useSelector((state: RootState) => state.invitations);
+
   return (
     <List>
       {players.map((player) => (
@@ -81,8 +85,11 @@ const PlayerList: React.FC<PlayerListProps> = ({ players, sendInvitation }) => {
               <Stars>⭐ {player.stars}</Stars>
             </div>
           </div>
-          <InviteButton onClick={() => sendInvitation(player)}>
-            Invite
+          <InviteButton
+            onClick={() => sendInvitation(player)}
+            disabled={isLoading}
+          >
+            {isLoading ? "Sending..." : "Invite"}
           </InviteButton>
         </ListItem>
       ))}
