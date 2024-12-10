@@ -54,21 +54,17 @@ module Api
             )
       
             # Broadcast game creation to both players
-            ActionCable.server.broadcast "games:#{game.player1.id}", {
-              type: "GAME_STARTED",
-              game_id: game.id,
-              opponent_id: game.player2.id,
-              opponent_username: game.player2.username,
-              status: game.status
-            }
-      
-            ActionCable.server.broadcast "games:#{game.player2.id}", {
-              type: "GAME_STARTED",
-              game_id: game.id,
-              opponent_id: game.player1.id,
-              opponent_username: game.player1.username,
-              status: game.status
-            }
+           
+               ActionCable.server.broadcast "invitations:#{game.player1.id}", {
+                  type: "GAME_STARTED",
+                  game_id: game.id
+                }
+              
+             
+               ActionCable.server.broadcast "invitations:#{game.player2.id}", {
+                  type: "GAME_STARTED",
+                  game_id: game.id
+                }
           end
       
           render json: { invitation: invitation }, status: :ok

@@ -1,6 +1,5 @@
-// src/pages/GamePage.tsx
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import GameBoard from "../components/GameBoard";
 import useGame from "../hooks/useGame";
@@ -25,14 +24,28 @@ const OpponentAvatar = styled.img`
 
 const GamePage: React.FC = () => {
   const navigate = useNavigate();
-  const { currentGame, updateCurrentGame, clearCurrentGame } = useGame();
+  const { id } = useParams();
+  const { currentGame, setCurrentGame, updateCurrentGame, clearCurrentGame } =
+    useGame();
   const { user, logout } = useUser();
   const [opponent, setOpponent] = useState<User | null>(null);
 
   useEffect(() => {
-    if (!currentGame) {
-      navigate("/game/multiplayer");
-    } else {
+    if (!currentGame && id) {
+      api
+        .get(`/games/${id}`)
+        .then((response) => {
+          setCurrentGame(response.data.game);
+        })
+        .catch((err) => {
+          console.error("Error fetching game:", err);
+          navigate("/game/multiplayer");
+        });
+    }
+  }, [currentGame, id, navigate, setCurrentGame]);
+
+  useEffect(() => {
+    if (currentGame) {
       const opponentId =
         currentGame.player1_id === user?.id
           ? currentGame.player2_id
@@ -44,7 +57,7 @@ const GamePage: React.FC = () => {
         });
       }
     }
-  }, [currentGame, navigate, user]);
+  }, [currentGame, user]);
 
   const handleMove = async (move: number) => {
     if (
@@ -100,8 +113,9 @@ const GamePage: React.FC = () => {
       {currentGame && (
         <GameBoard
           board={currentGame.moves}
+          // Pass player1_id and player2_id to GameBoard to assign symbols correctly
+          player1Id={currentGame.player1_id}
           onCellClick={handleMove}
-          currentUserId={user?.id || 0}
         />
       )}
       {currentGame?.winner_id && (

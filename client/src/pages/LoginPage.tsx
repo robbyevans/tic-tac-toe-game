@@ -1,7 +1,6 @@
 // src/pages/LoginPage.tsx
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
-import { useUser } from "../hooks/useUser";
 import { setUser, setToken } from "../slices/userSlice";
 import { useNavigate } from "react-router-dom";
 import api from "../utils/api";
@@ -16,11 +15,6 @@ const LoginPage: React.FC = () => {
   const [pin, setPin] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const { isAuthenticated } = useUser();
-
-  if (isAuthenticated) {
-    navigate("/game");
-  }
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -50,7 +44,7 @@ const LoginPage: React.FC = () => {
       dispatch(setToken(token));
       localStorage.setItem("jwt_token", token);
 
-      navigate("/game");
+      navigate("/welcome");
     } catch (err: any) {
       setError(err.response?.data?.errors?.[0] || "Login failed.");
     } finally {

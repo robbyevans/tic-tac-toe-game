@@ -56,7 +56,7 @@ const RegisterPage: React.FC = () => {
       dispatch(setToken(token));
       localStorage.setItem("jwt_token", token);
 
-      navigate("/game");
+      navigate("/welcome");
     } catch (err: any) {
       if (err.response && err.response.data && err.response.data.errors) {
         setError(err.response.data.errors.join(", "));

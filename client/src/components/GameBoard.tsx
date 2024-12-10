@@ -1,4 +1,3 @@
-// src/components/GameBoard.tsx
 import React from "react";
 import styled from "styled-components";
 
@@ -10,10 +9,8 @@ interface Move {
 interface GameBoardProps {
   board: Move[] | null;
   onCellClick: (move: number) => void;
-  currentUserId: number;
+  player1Id: number | null;
 }
-
-type PlayerSymbol = "X" | "O" | null;
 
 const Board = styled.div`
   display: grid;
@@ -25,13 +22,6 @@ const Board = styled.div`
   padding: 20px;
   border-radius: 16px;
   border: 2px solid #ddd;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-
-  @media (max-width: 480px) {
-    grid-template-columns: repeat(3, 80px);
-    grid-template-rows: repeat(3, 80px);
-    padding: 10px;
-  }
 `;
 
 const Cell = styled.div`
@@ -66,13 +56,13 @@ const Symbol = styled.span<{ player: "X" | "O" }>`
 const GameBoard: React.FC<GameBoardProps> = ({
   board,
   onCellClick,
-  currentUserId,
+  player1Id,
 }) => {
-  const displayBoard: PlayerSymbol[] = Array(9).fill(null);
+  const displayBoard = Array(9).fill(null);
 
   if (board) {
     board.forEach((move) => {
-      const symbol = move.player_id === currentUserId ? "X" : "O";
+      const symbol = move.player_id === player1Id ? "X" : "O";
       displayBoard[move.move] = symbol;
     });
   }
@@ -87,7 +77,7 @@ const GameBoard: React.FC<GameBoardProps> = ({
     <Board>
       {displayBoard.map((cell, index) => (
         <Cell key={index} onClick={() => handleClick(index)}>
-          {cell && <Symbol player={cell}>{cell}</Symbol>}
+          {cell && <Symbol player={cell as "X" | "O"}>{cell}</Symbol>}
         </Cell>
       ))}
     </Board>

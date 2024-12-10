@@ -7,6 +7,7 @@ Rails.application.routes.draw do
       post 'login', to: 'sessions#create'
 
       get 'players/available', to: 'players#available'
+       get 'users/:id', to: 'users#show'
 
       resources :invitations, only: [:create] do
         member do

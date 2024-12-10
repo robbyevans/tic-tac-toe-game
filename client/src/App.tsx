@@ -14,6 +14,7 @@ import ProfilePage from "./pages/ProfilePages";
 import HomePage from "./pages/HomePage";
 import ProtectedRoute from "./components/ProtectedRoute";
 import InvitationsListener from "./components/InvitationsListener";
+import WelcomePage from "./pages/WelcomePage";
 
 const App: React.FC = () => {
   return (
@@ -23,7 +24,23 @@ const App: React.FC = () => {
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route
+          path="/welcome"
+          element={
+            <ProtectedRoute>
+              <WelcomePage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
           path="/game"
+          element={
+            <ProtectedRoute>
+              <GamePage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/game/:id"
           element={
             <ProtectedRoute>
               <GamePage />
