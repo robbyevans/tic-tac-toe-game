@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import { useDispatch } from "react-redux";
 import axios from "axios";
 import GameBoard from "../components/GameBoard";
 import useGame from "../hooks/useGame";
@@ -9,6 +10,8 @@ import * as S from "../styles/styledComponents";
 import { User } from "../types";
 import { PageContainer, PageTitle } from "../styles/styledPages";
 import styled from "styled-components";
+import createCable from "../utils/actionCable";
+import { updateGame } from "../slices/gameSlice";
 
 const OpponentSection = styled.div`
   display: flex;
@@ -27,8 +30,9 @@ const GamePage: React.FC = () => {
   const { id } = useParams();
   const { currentGame, setCurrentGame, updateCurrentGame, clearCurrentGame } =
     useGame();
-  const { user, logout } = useUser();
+  const { user, token, logout } = useUser();
   const [opponent, setOpponent] = useState<User | null>(null);
+  const dispatch = useDispatch();
 
   useEffect(() => {
     if (!currentGame && id) {
@@ -58,6 +62,26 @@ const GamePage: React.FC = () => {
       }
     }
   }, [currentGame, user]);
+
+  useEffect(() => {
+    if (currentGame && token) {
+      const cable = createCable(token);
+      const subscription = cable.subscriptions.create(
+        { channel: "GamesChannel", game_id: currentGame.id },
+        {
+          received: (data) => {
+            if (data.game) {
+              dispatch(updateGame(data.game));
+            }
+          },
+        }
+      );
+
+      return () => {
+        subscription.unsubscribe();
+      };
+    }
+  }, [currentGame, token, dispatch]);
 
   const handleMove = async (move: number) => {
     if (

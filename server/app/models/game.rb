@@ -11,4 +11,8 @@ class Game < ApplicationRecord
 
   validates :player1, presence: true
   validates :status, presence: true
+
+  def as_json(options = {})
+    super(options.merge(only: [:id, :status, :player1_id, :player2_id, :winner_id, :moves]))
+  end
 end
