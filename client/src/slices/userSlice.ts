@@ -3,17 +3,10 @@
 import { createSlice, PayloadAction, createAsyncThunk } from "@reduxjs/toolkit";
 import api from "../utils/api"; // Ensure this is your configured Axios instance
 import { RootState } from "../store/store";
-
-interface User {
-  id: number;
-  username: string;
-  avatar_url?: string;
-  email: string;
-  stars: number;
-}
+import { IUser } from "@src/types";
 
 interface UserState {
-  user: User | null;
+  user: IUser | null;
   token: string | null;
 }
 
@@ -23,7 +16,7 @@ const initialState: UserState = {
 };
 
 // Async thunk to fetch user data
-export const fetchUser = createAsyncThunk<User, void, { state: RootState }>(
+export const fetchUser = createAsyncThunk<IUser, void, { state: RootState }>(
   "user/fetchUser",
   async (_, { getState, rejectWithValue }) => {
     const state = getState();
@@ -46,7 +39,7 @@ const userSlice = createSlice({
   name: "user",
   initialState,
   reducers: {
-    setUser(state, action: PayloadAction<User>) {
+    setUser(state, action: PayloadAction<IUser>) {
       state.user = action.payload;
       localStorage.setItem("user", JSON.stringify(action.payload));
     },
@@ -67,7 +60,7 @@ const userSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      .addCase(fetchUser.fulfilled, (state, action: PayloadAction<User>) => {
+      .addCase(fetchUser.fulfilled, (state, action: PayloadAction<IUser>) => {
         state.user = action.payload;
         localStorage.setItem("user", JSON.stringify(action.payload));
       })

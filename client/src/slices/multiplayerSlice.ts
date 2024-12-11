@@ -1,10 +1,10 @@
 // src/slices/multiplayerSlice.ts
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import api from "../utils/api";
-import { User } from "../types";
+import api from "@src/utils/api";
+import { IUser } from "@src/types";
 
 interface MultiplayerState {
-  availablePlayers: User[];
+  availablePlayers: IUser[];
   error: string | null;
 }
 

@@ -1,15 +1,15 @@
 // src/slices/invitationSlice.ts
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import api from "../utils/api";
-import { Invitation, Game } from "../types";
+import api from "@src/utils/api";
+import { IInvitation, IGame } from "@src/types";
 
 export interface GameResponse {
-  game: Game;
+  game: IGame;
 }
 
 interface InvitationState {
-  invitations: Invitation[];
-  currentInvitation: Invitation | null;
+  invitations: IInvitation[];
+  currentInvitation: IInvitation | null;
   expiryTime: number | null;
   error: string | null;
   isLoading: boolean;
@@ -63,7 +63,7 @@ const invitationSlice = createSlice({
     addInvitation(state, action) {
       state.invitations.push(action.payload);
       state.currentInvitation = action.payload;
-      state.expiryTime = Date.now() + 30000;
+      state.expiryTime = Date.now() + 30000; // Example: 30 seconds
     },
     clearCurrentInvitation(state) {
       state.currentInvitation = null;
@@ -95,7 +95,6 @@ const invitationSlice = createSlice({
       })
       .addCase(acceptInvitation.fulfilled, (state) => {
         state.isLoading = false;
-        // Once accepted, clear the current invitation to avoid confusion.
         state.currentInvitation = null;
       })
       .addCase(acceptInvitation.rejected, (state, action) => {

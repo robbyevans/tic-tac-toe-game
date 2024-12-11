@@ -1,10 +1,9 @@
 // src/slices/gameSlice.ts
-
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { Game } from "../types";
+import { IGame } from "@src/types";
 
 interface GameState {
-  currentGame: Game | null;
+  currentGame: IGame | null;
 }
 
 const initialState: GameState = {
@@ -15,10 +14,10 @@ const gameSlice = createSlice({
   name: "game",
   initialState,
   reducers: {
-    setGame(state, action: PayloadAction<Game>) {
+    setGame(state, action: PayloadAction<IGame>) {
       state.currentGame = action.payload;
     },
-    updateGame(state, action: PayloadAction<Game>) {
+    updateGame(state, action: PayloadAction<IGame>) {
       state.currentGame = action.payload;
     },
     clearGame(state) {

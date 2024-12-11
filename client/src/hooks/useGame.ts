@@ -5,7 +5,7 @@ import { RootState } from "../store/store"; // Update with the correct path to y
 import { setGame, updateGame, clearGame } from "../slices/gameSlice";
 import { Game } from "../types";
 
-const useGame = () => {
+export const useGame = () => {
   const dispatch = useDispatch();
 
   // Access current game state
@@ -31,5 +31,3 @@ const useGame = () => {
     clearCurrentGame,
   };
 };
-
-export default useGame;
