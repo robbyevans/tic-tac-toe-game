@@ -57,6 +57,25 @@ module Api
         end
       end
 
+      def play_again_request
+        @game = Game.find(params[:id])
+        # Determine the other player
+        other_player_id = @game.player1_id == current_user.id ? @game.player2_id : @game.player1_id
+        # Broadcast a PLAY_AGAIN_REQUEST event to the other player
+        GamesChannel.broadcast_to(@game, { type: "PLAY_AGAIN_REQUEST" })
+        render json: { success: true }
+      end
+      
+      def play_again_accept
+        @game = Game.find(params[:id])
+        # Reset the game
+        @game.update(moves: [], winner_id: nil, status: 'ongoing')
+        # Broadcast updated game state
+        GamesChannel.broadcast_to(@game, { type: "PLAY_AGAIN_ACCEPTED", game: @game.as_json })
+        render json: { game: @game.as_json }, status: :ok
+      end
+      
+
       private
 
       def set_game

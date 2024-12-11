@@ -8,6 +8,7 @@ import {
   StyledDescription,
 } from "../styles/styledPages";
 import styled from "styled-components";
+import BackButton from "../components/BackButton";
 
 const ActionButtons = styled.div`
   display: flex;
@@ -28,6 +29,7 @@ const HomePage: React.FC = () => {
 
   return (
     <PageContainer>
+      <BackButton/>
       <PageTitle>Welcome to Tic-Tac-Toe Master!</PageTitle>
       <StyledDescription>
         Engage in thrilling Tic-Tac-Toe battles against friends or challenge

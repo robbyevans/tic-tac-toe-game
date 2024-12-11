@@ -17,6 +17,8 @@ Rails.application.routes.draw do
       resources :games, only: [:create, :show] do
         member do
           put 'move', to: 'games#update_move'
+          post 'play_again_request'
+          post 'play_again_accept'
         end
       end
     end

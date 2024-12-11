@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 import api from "../utils/api";
 import * as S from "../styles/styledComponents";
 import { PageContainer, PageTitle, Card } from "../styles/styledPages";
+import BackButton from "../components/BackButton";
 
 const LoginPage: React.FC = () => {
   const dispatch = useDispatch();
@@ -54,6 +55,7 @@ const LoginPage: React.FC = () => {
 
   return (
     <PageContainer>
+      <BackButton />
       <PageTitle>Login</PageTitle>
       <Card>
         <S.Form onSubmit={handleLogin}>

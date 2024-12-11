@@ -6,6 +6,7 @@ import * as S from "../styles/styledComponents";
 import styled from "styled-components";
 import { useUser } from "../hooks/useUser";
 import ProfileIcon from "../components/ProfileIcon";
+import BackButton from "../components/BackButton";
 
 type Player = "X" | "O";
 type CellValue = Player | null;
@@ -99,6 +100,7 @@ const SinglePlayerPage: React.FC = () => {
 
   return (
     <S.Container>
+      <BackButton />
       <S.TopBar>
         <ProfileIcon
           avatarUrl={user?.avatar_url}

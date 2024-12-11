@@ -9,6 +9,7 @@ import { useUser } from "../hooks/useUser";
 import ProfileIcon from "../components/ProfileIcon";
 import { useNavigate } from "react-router-dom";
 import { PageContainer, PageTitle, Card } from "../styles/styledPages";
+import BackButton from "../components/BackButton";
 
 const MultiplayerPage: React.FC = () => {
   const { user, logout } = useUser();
@@ -41,6 +42,7 @@ const MultiplayerPage: React.FC = () => {
 
   return (
     <PageContainer>
+      <BackButton />
       <S.TopBar>
         <ProfileIcon
           avatarUrl={user?.avatar_url || ""}

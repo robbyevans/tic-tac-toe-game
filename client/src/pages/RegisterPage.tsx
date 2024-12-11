@@ -7,6 +7,7 @@ import api from "../utils/api";
 import * as S from "../styles/styledComponents";
 import AvatarSelector from "../components/AvatorSelector";
 import { PageContainer, PageTitle, Card } from "../styles/styledPages";
+import BackButton from "../components/BackButton";
 
 const RegisterPage: React.FC = () => {
   const dispatch = useDispatch();
@@ -70,6 +71,7 @@ const RegisterPage: React.FC = () => {
 
   return (
     <PageContainer>
+      <BackButton />
       <PageTitle>Register</PageTitle>
       <Card>
         <S.Form onSubmit={handleSubmit}>
