@@ -10,9 +10,10 @@ import ProfileIcon from "../components/ProfileIcon";
 import { useNavigate } from "react-router-dom";
 import { PageContainer, PageTitle, Card } from "../styles/styledPages";
 import BackButton from "../components/BackButton";
+import createCable from "../utils/actionCable"; // import the cable creation function
 
 const MultiplayerPage: React.FC = () => {
-  const { user, logout } = useUser();
+  const { user, token, logout } = useUser();
   const { currentInvitation, handleAcceptInvitation } = useInvitations(
     user?.id || null
   );
@@ -24,6 +25,22 @@ const MultiplayerPage: React.FC = () => {
   useEffect(() => {
     loadPlayers();
   }, []);
+
+  useEffect(() => {
+    if (token) {
+      const cable = createCable(token);
+      const subscription = cable.subscriptions.create("PlayersChannel", {
+        received(data: any) {
+          if (data.type === "PLAYER_LIST_UPDATED") {
+            loadPlayers(); // Re-fetch the updated player list
+          }
+        },
+      });
+      return () => {
+        subscription.unsubscribe();
+      };
+    }
+  }, [token, loadPlayers]);
 
   const handleAccept = async () => {
     if (currentInvitation?.id) {
