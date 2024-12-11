@@ -32,6 +32,11 @@ class User < ApplicationRecord
     end
   end
 
+   # Optionally, when user logs in or whenever they do something that shows they are active:
+   def touch_last_seen
+    update_column(:last_seen_at, Time.current)
+  end
+
   private
 
   def avatar_validation

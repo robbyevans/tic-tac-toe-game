@@ -1,16 +1,6 @@
-// src/components/PlayerList.tsx
-
 import React from "react";
 import styled from "styled-components";
-import { useSelector } from "react-redux";
-import { RootState } from "../store/store";
-
-interface User {
-  id: number;
-  username: string;
-  avatar_url?: string;
-  stars: number;
-}
+import { User } from "../types";
 
 interface PlayerListProps {
   players: User[];
@@ -68,31 +58,65 @@ const InviteButton = styled.button`
   }
 `;
 
-const PlayerList: React.FC<PlayerListProps> = ({ players, sendInvitation }) => {
-  const { isLoading } = useSelector((state: RootState) => state.invitations);
+const StatusDot = styled.div<{ color: string }>`
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background-color: ${(props) => props.color};
+  margin-left: 10px;
+`;
 
+// Helper function to determine the color based on last_seen_at
+function getStatusColor(last_seen_at?: string): string {
+  if (!last_seen_at) {
+    // No last seen time recorded - consider them offline (red)
+    return "red";
+  }
+  const lastSeen = new Date(last_seen_at).getTime();
+  const now = Date.now();
+  const diff = now - lastSeen; // difference in milliseconds
+
+  const fiveMinutes = 5 * 60 * 1000;
+  const oneHour = 60 * 60 * 1000;
+
+  if (diff <= fiveMinutes) {
+    // online
+    return "green";
+  } else if (diff <= oneHour) {
+    // recent
+    return "orange";
+  } else {
+    // offline
+    return "red";
+  }
+}
+
+const PlayerList: React.FC<PlayerListProps> = ({ players, sendInvitation }) => {
   return (
     <List>
-      {players.map((player) => (
-        <ListItem key={player.id}>
-          <div style={{ display: "flex", alignItems: "center" }}>
-            <Avatar
-              src={player.avatar_url}
-              alt={`${player.username}'s avatar`}
-            />
-            <div>
-              <Username>{player.username}</Username>
-              <Stars>⭐ {player.stars}</Stars>
+      {players.map((player) => {
+        const statusColor = getStatusColor(player.last_seen_at);
+        return (
+          <ListItem key={player.id}>
+            <div style={{ display: "flex", alignItems: "center" }}>
+              <Avatar
+                src={player.avatar_url}
+                alt={`${player.username}'s avatar`}
+              />
+              <div>
+                <Username>{player.username}</Username>
+                <Stars>⭐ {player.stars}</Stars>
+              </div>
             </div>
-          </div>
-          <InviteButton
-            onClick={() => sendInvitation(player)}
-            disabled={isLoading}
-          >
-            {isLoading ? "Sending..." : "Invite"}
-          </InviteButton>
-        </ListItem>
-      ))}
+            <div style={{ display: "flex", alignItems: "center" }}>
+              <InviteButton onClick={() => sendInvitation(player)}>
+                Invite
+              </InviteButton>
+              <StatusDot color={statusColor} />
+            </div>
+          </ListItem>
+        );
+      })}
     </List>
   );
 };

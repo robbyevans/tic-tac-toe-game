@@ -6,6 +6,7 @@ export interface User {
   avatar_url?: string;
   email?: string;
   stars: number;
+  last_seen_at?: string;
 }
 
 export interface Move {
