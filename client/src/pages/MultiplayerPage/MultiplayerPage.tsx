@@ -11,9 +11,9 @@ interface MultiplayerPageProps {
   avatarUrl: string | undefined;
   username: string | undefined;
   logout: () => void;
-  availablePlayers: IUser[]; // Adjust type as needed
+  availablePlayers: IUser[];
   invitePlayer: (playerId: number) => void;
-  currentInvitation: IInvitation | null; // Adjust type as needed
+  currentInvitation: IInvitation | null;
   acceptInvitation: () => void;
   declineInvitation: () => void;
   multiplayerError: string | null;

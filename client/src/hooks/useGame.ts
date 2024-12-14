@@ -1,9 +1,9 @@
 // src/hooks/useGame.ts
 
 import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "../store/store"; // Update with the correct path to your store
+import { RootState } from "../store/store";
 import { setGame, updateGame, clearGame } from "../slices/gameSlice";
-import { Game } from "../types";
+import { IGame } from "../types";
 
 export const useGame = () => {
   const dispatch = useDispatch();
@@ -12,11 +12,11 @@ export const useGame = () => {
   const currentGame = useSelector((state: RootState) => state.game.currentGame);
 
   // Action creators
-  const setCurrentGame = (game: Game) => {
+  const setCurrentGame = (game: IGame) => {
     dispatch(setGame(game));
   };
 
-  const updateCurrentGame = (game: Game) => {
+  const updateCurrentGame = (game: IGame) => {
     dispatch(updateGame(game));
   };
 

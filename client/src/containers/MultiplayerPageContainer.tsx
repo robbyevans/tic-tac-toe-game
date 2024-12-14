@@ -5,24 +5,28 @@ import MultiplayerPage from "@src/pages/MultiplayerPage/MultiplayerPage";
 import { useMultiplayer } from "@src/hooks/useMultiplayer";
 import useInvitations from "@src/hooks/useInvitations";
 import { useUser } from "@src/hooks/useUser";
+import { useDispatch } from "react-redux";
+import { fetchPlayers } from "@src/slices/multiplayerSlice";
+import { AppDispatch } from "@src/store/store";
 
 const MultiplayerPageContainer: React.FC = () => {
   const { user, logout } = useUser();
   const { currentInvitation, handleAcceptInvitation } = useInvitations();
   const navigate = useNavigate();
+  const dispatch = useDispatch<AppDispatch>();
 
   const {
     availablePlayers,
-    loadPlayers,
     invitePlayer,
     declineInvitation,
     multiplayerError,
+
     invitationError,
   } = useMultiplayer();
 
   useEffect(() => {
-    loadPlayers();
-  }, []);
+    dispatch(fetchPlayers);
+  }, [dispatch]);
 
   const handleAccept = async () => {
     if (currentInvitation?.id) {

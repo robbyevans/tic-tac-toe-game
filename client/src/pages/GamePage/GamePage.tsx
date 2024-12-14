@@ -8,9 +8,9 @@ import GameBoard from "@src/components/GameBoard/GameBoard";
 import PlayAgainModal from "@src/components/PlayAgainModal/PlayAgainModal";
 
 interface GamePageProps {
-  user: IUser | null; // Adjust type as needed
-  opponent: IUser | null; // Adjust type as needed
-  currentGame: IGame | null; // Adjust type as needed
+  user: IUser | null;
+  opponent: IUser | null;
+  currentGame: IGame | null;
   onMove: (move: number) => void;
   onPlayAgainRequest: () => void;
   onPlayAgainAccept: () => void;
@@ -60,16 +60,21 @@ const GamePage: React.FC<GamePageProps> = ({
           onCellClick={onMove}
         />
       )}
-      {currentGame?.winner_id && (
+      {currentGame && currentGame.status === "finished" && (
         <>
-          <S.GameResult>
-            {currentGame.winner_id === user?.id ? "You Win!" : "You Lose!"}
-          </S.GameResult>
+          {currentGame.winner_id ? (
+            <S.GameResult>
+              {currentGame.winner_id === user?.id ? "You Win!" : "You Lose!"}
+            </S.GameResult>
+          ) : (
+            <S.GameResult>It's a draw!</S.GameResult>
+          )}
           <S.PlayAgainButton onClick={onPlayAgainRequest}>
             Play Again
           </S.PlayAgainButton>
         </>
       )}
+
       {showPlayAgainModal && (
         <PlayAgainModal
           onAccept={onPlayAgainAccept}

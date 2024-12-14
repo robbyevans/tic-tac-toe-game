@@ -6,10 +6,10 @@ import GamePage from "@src/pages/GamePage/GamePage";
 import { useGame } from "@src/hooks/useGame";
 import { useUser } from "@src/hooks/useUser";
 import api from "@src/utils/api";
-import getCable from "@src/utils/actionCable"; // Updated import
+import getCable from "@src/utils/actionCable";
 import { updateGame } from "@src/slices/gameSlice";
-import type { IUser } from "@src/types"; // Use 'import type' for type-only imports
-import { isAxiosError } from "axios"; // Import isAxiosError directly from Axios
+import type { IUser } from "@src/types";
+import { isAxiosError } from "axios";
 
 const GamePageContainer: React.FC = () => {
   const navigate = useNavigate();
@@ -20,7 +20,6 @@ const GamePageContainer: React.FC = () => {
   const [opponent, setOpponent] = useState<IUser | null>(null);
   const dispatch = useDispatch();
 
-  // State for Play Again Modal
   const [showPlayAgainModal, setShowPlayAgainModal] = useState(false);
 
   useEffect(() => {
@@ -66,6 +65,7 @@ const GamePageContainer: React.FC = () => {
               setShowPlayAgainModal(true);
             }
             if (data.type === "PLAY_AGAIN_ACCEPTED") {
+              dispatch(updateGame(data.game));
               // Handle accepted rematch if needed
             }
           },
@@ -129,6 +129,7 @@ const GamePageContainer: React.FC = () => {
       try {
         await api.post(`/games/${currentGame.id}/play_again_accept`);
         setShowPlayAgainModal(false);
+        clearCurrentGame();
       } catch (err) {
         console.error("Error accepting rematch:", err);
       }
@@ -137,6 +138,7 @@ const GamePageContainer: React.FC = () => {
 
   const handlePlayAgainDecline = () => {
     setShowPlayAgainModal(false);
+    clearCurrentGame();
   };
 
   return (

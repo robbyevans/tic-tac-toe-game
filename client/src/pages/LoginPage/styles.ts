@@ -30,7 +30,6 @@ export const Card = styled.div`
   border-radius: 16px;
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
   max-width: 500px;
-  width: 100%;
   animation: ${fadeIn} 0.5s ease forwards;
 `;
 
